@@ -2,7 +2,7 @@
 
 A simple wrapper for JNI bindings of the Sword Project (http://crosswire.org/sword)
 
-## Installation Android
+## Installation
 1. `npm install --save react-native-swordz`
 2. In `android/setting.gradle`
 
@@ -24,7 +24,7 @@ A simple wrapper for JNI bindings of the Sword Project (http://crosswire.org/swo
 
 4. Register module (in MainActivity.java) → React Native >= 0.19
 
-    4.2. With RN >= 0.19.0
+    With RN >= 0.19.0
 
         ```java
         import org.crosswire.android.sword.SwordZPackage; // <----- import
@@ -59,3 +59,6 @@ mSwordZ.SWMgr_getModInfoList((modules) => {
 Check ```android/src/main/java/org/crosswire/android/sword/SwordZModule.java```. Most of the API calls take a callback.
 
 You have to call ```mSwordZ.SWMgr_reInit();``` first to init the native C++ library!
+
+## Licence
+GPLv3
