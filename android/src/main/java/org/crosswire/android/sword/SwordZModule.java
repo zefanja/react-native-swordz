@@ -9,6 +9,7 @@ import com.facebook.react.bridge.Callback;
 
 import android.util.Log;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 public class SwordZModule extends ReactContextBaseJavaModule {
     private static final String     REACT_CLASS = "SwordZ";
@@ -27,16 +28,6 @@ public class SwordZModule extends ReactContextBaseJavaModule {
         super(reactContext);
         mReactContext = reactContext;
     }
-
-    // public native void             setUserDisclaimerConfirmed();
-    // public native int              syncConfig();
-    // public native int              uninstallModule(String modName);
-    // public native String []        getRemoteSources();
-    // public native int              refreshRemoteSource(String sourceName);
-    // public native SWMgr.ModInfo [] getRemoteModInfoList(String sourceName);
-    // public native int              remoteInstallModule(String sourceName, String modName, InstallProgressReporter progressReporter);
-    // public int                     remoteInstallModule(String sourceName, String modName) { return remoteInstallModule(sourceName, modName, null); }
-    // public native SWModule         getRemoteModuleByName(String source, String name);
 
     /* InstallMgr */
     @ReactMethod
@@ -125,5 +116,78 @@ public class SwordZModule extends ReactContextBaseJavaModule {
             mSWMgr = new SWMgr();
         String localModules = new Gson().toJson(mSWMgr.getModInfoList());
         callback.invoke(localModules);
+    }
+
+    @ReactMethod
+    public void SWMgr_setGlobalOption(String option, String value) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        mSWMgr.setGlobalOption(option, value);
+    }
+
+    @ReactMethod
+    public void SWMgr_getGlobalOption(String option, Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        callback.invoke(mSWMgr.getGlobalOption(option));
+    }
+
+    @ReactMethod
+    public void SWMgr_getGlobalOptions(Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        String globalOptions = new Gson().toJson(mSWMgr.getGlobalOptions());
+        callback.invoke(globalOptions);
+    }
+
+    @ReactMethod
+    public void SWMgr_getGlobalOptionValues(String option, Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        String globalOptionValues = new Gson().toJson(mSWMgr.getGlobalOptionValues(option));
+        callback.invoke(globalOptionValues);
+    }
+
+    @ReactMethod
+    public void SWMgr_getAvailableLocales(Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        String availableLocales = new Gson().toJson(mSWMgr.getAvailableLocales());
+        callback.invoke(availableLocales);
+    }
+
+    @ReactMethod
+    public void SWMgr_setDefaultLocale(String name) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        mSWMgr.setDefaultLocale(name);
+    }
+
+    /* SWMModule */
+    @ReactMethod
+    public void SWModule_getKeyChildren(String modName, Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        String keyChildren = new Gson().toJson(mSWMgr.getModuleByName(modName).getKeyChildren());
+        callback.invoke(keyChildren);
+    }
+
+    @ReactMethod
+    public void SWModule_getRenderText(String modName, String passage, Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        SWModule module = mSWMgr.getModuleByName(modName);
+        String[] verseList = module.parseKeyList(passage);
+        String renderText = "";
+        for (int i = 0; i < verseList.length; i++) {
+            module.setKeyText(verseList[i]);
+
+            if (i == 0) renderText += "[";
+            renderText += "{\"verseKey\": \"" + verseList[i] + "\", \"text\": \"" + StringEscapeUtils.escapeJava(module.getRenderText()) + "\"}";
+            if (i < verseList.length-1) renderText += ", ";
+        }
+        renderText += "]";
+
+        callback.invoke(renderText);
     }
 }
