@@ -165,11 +165,43 @@ public class SwordZModule extends ReactContextBaseJavaModule {
 
     /* SWMModule */
     @ReactMethod
-    public void SWModule_getKeyChildren(String modName, Callback callback) {
+    public void SWModule_getKeyChildren(String modName, String key, Callback callback) {
         if (mSWMgr == null)
             mSWMgr = new SWMgr();
+        SWModule module = mSWMgr.getModuleByName(modName);
+        module.setKeyText(key);
         String keyChildren = new Gson().toJson(mSWMgr.getModuleByName(modName).getKeyChildren());
         callback.invoke(keyChildren);
+    }
+
+    @ReactMethod
+    public void SWModule_getBooks(String modName, Callback callback) {
+        if (mSWMgr == null)
+            mSWMgr = new SWMgr();
+        SWModule module = mSWMgr.getModuleByName(modName);
+        String booksText =  "";
+        // if(module.hasKeyChildren() == true) {
+            booksText +=  "[";
+            String[] tmp = module.getKeyChildren();
+            int tmpBook = 0;
+            int tmpTestament = 0;
+
+            do {
+                tmpBook = Integer.parseInt(tmp[1]); // current booknumber
+                tmpTestament = Integer.parseInt(tmp[0]); // current testament
+
+                booksText += "{\"name\": \"" + tmp[6] + "\", \"abbrev\": \"" + tmp[9] + "\", \"bookNumber\":" + tmp[1] + ", \"testament\":" + tmp[0] + ", \"chapterMax\":" + tmp[4] + "}";
+                module.setKeyText("+book");
+                tmp = module.getKeyChildren();
+                if (tmpBook != Integer.parseInt(tmp[1])) booksText += ", ";
+
+            } while (tmpBook != Integer.parseInt(tmp[1]));
+        // }
+
+        booksText += "]";
+
+        String books = new Gson().toJson(booksText);
+        callback.invoke(booksText);
     }
 
     @ReactMethod
