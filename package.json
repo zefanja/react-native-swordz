@@ -1,6 +1,6 @@
 {
   "name": "react-native-swordz",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "react-native android module for crosswire's sword",
   "main": "index.js",
   "scripts": {

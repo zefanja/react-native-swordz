@@ -182,6 +182,7 @@ public class SwordZModule extends ReactContextBaseJavaModule {
         String booksText =  "";
         // if(module.hasKeyChildren() == true) {
             booksText +=  "[";
+            module.begin();
             String[] tmp = module.getKeyChildren();
             int tmpBook = 0;
             int tmpTestament = 0;
